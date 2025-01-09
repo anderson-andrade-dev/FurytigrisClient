@@ -2,7 +2,7 @@
 
 **Furytigris Client** é um launcher e cliente customizado para o jogo **Minecraft**. Ele permite que os jogadores acessem diferentes versões do Minecraft, se conectem aos seus servidores favoritos e aproveitem recursos extras, como mods, pacotes de textura e melhorias gráficas.
 
-![Furytigris Client](furytigris/images/imagenREADME.png) <!-- Substitua URL_DA_IMAGEM com o link para a imagem desejada -->
+![Furytigris Client](com.furytigrisnet.furytigris/images/imagenREADME.png) <!-- Substitua URL_DA_IMAGEM com o link para a imagem desejada -->
 
 ## Funcionalidades
 
