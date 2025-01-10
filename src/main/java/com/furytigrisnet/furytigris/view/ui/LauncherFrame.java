@@ -1,20 +1,23 @@
 package com.furytigrisnet.furytigris.view.ui;
 
-import com.furytigrisnet.furytigris.FurytigrisApplication;
+import com.furytigrisnet.furytigris.services.MinecraftLauncherService;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+@Component
 public class LauncherFrame {
-
-    public LauncherFrame() {
-        initialize();
-    }
 
     public JFrame frame;
     public JPanel panel;
+    public MinecraftLauncherService minecraftLauncherService;
+
+    public LauncherFrame(MinecraftLauncherService minecraftLauncherService) {
+        this.minecraftLauncherService = minecraftLauncherService;
+    }
 
     public void initialize() {
 
@@ -52,7 +55,7 @@ public class LauncherFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Thread(() -> {
-                    FurytigrisApplication.launch();}).start();
+                    minecraftLauncherService.launchMinecraft();}).start();
                 buttonlaunch.setText("Iniciando");
 
             }
