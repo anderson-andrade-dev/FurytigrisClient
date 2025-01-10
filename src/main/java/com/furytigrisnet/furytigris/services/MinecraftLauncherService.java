@@ -24,20 +24,20 @@ import java.net.URL;
 public class MinecraftLauncherService {
 
     private static final Logger logger = LoggerFactory.getLogger(MinecraftLauncherService.class);
-    private static final String JAVA_URL = "https://www.openlogic.com/openjdk-downloads?field_java_parent_version_target_id=416&field_operating_system_target_id=All&field_architecture_target_id=391&field_java_package_target_id=401";
     private static final String NATIVE_URL = "https://download1584.mediafire.com/ohxueeoflwagXrAzSP5dUXqcdDZtVQky4NnsO6Reoc6Cw5VYqnlSGg5L1yahPMmW7RcBKhiWjDUtlnR069Y5q6Rz5wlscrqm4DKrZHV_u0A5vLdJWGUxNKBm97z0WnRNvynBhZXazf4YnzABJ_Q0_WX9WzCdFfsrKAJ3aN3TsBoFygI/mzr3tnutaj1izv4/natives.zip";
     private static final String LIBRARY_URL = "https://download1500.mediafire.com/dw65rqhv7pkgv0HdSXdn6MtI60ScB-zyZmygYdyroa39MQsYozv_TpcTxiaxJjZZGVYfzQ9K0HwHIwFESyefURmdHS5iKMvvmEt0QondTB5jhq2oxlkR1y2srdf_QQALWTKlwlAzGQtVVvdDKoJJI3kbxDLoQixwiJ7vcuPsP0gihXA/h5z12385dpsjl2p/libraries.zip";
     private static final String JAR_URL = "https://launcher.mojang.com/v1/objects/0983f08be6a4e624f5d85689d1aca869ed99c738/client.jar";
 
-    private final String basePath = System.getProperty("user.dir") + File.separator + "src" + File.separator +
-            "main" + File.separator + "resources" + File.separator + "static" + File.separator + "download";
+    // Diretório de download
+    private final String basePath = System.getProperty("user.dir") + File.separator + "downloads";
 
     /**
      * Garante que os diretórios necessários existam.
      */
     private void ensureDirectories() {
         createDirectoryIfNotExists(basePath);
-        createDirectoryIfNotExists(basePath + File.separator + "java");
+        createDirectoryIfNotExists(basePath + File.separator + "natives");
+        createDirectoryIfNotExists(basePath + File.separator + "libraries");
     }
 
     /**
@@ -59,33 +59,44 @@ public class MinecraftLauncherService {
     public void downloadFiles() {
         ensureDirectories();
         try {
+            logger.info("Iniciando o download dos arquivos...");
             downloadFile(NATIVE_URL, new File(basePath + File.separator + "natives.zip"));
             downloadFile(LIBRARY_URL, new File(basePath + File.separator + "libraries.zip"));
             downloadFile(JAR_URL, new File(basePath + File.separator + "client.jar"));
+            logger.info("Downloads concluídos.");
         } catch (Exception e) {
-            logger.error("Erro ao baixar arquivos: {}", e.getMessage());
+            logger.error("Erro ao baixar arquivos: {}", e.getMessage(), e);
         }
     }
 
     /**
      * Faz o download de um arquivo único a partir de uma URL fornecida para o destino especificado.
-     * Agora com verificação do download.
+     * Agora com verificação do download e logs.
      *
      * @param url         A URL de onde baixar o arquivo.
      * @param destination O arquivo de destino.
      * @throws Exception se ocorrer um erro durante o download.
      */
     private void downloadFile(String url, File destination) throws Exception {
-        logger.info("Baixando arquivo de: {}", url);
+        logger.info("Iniciando o download de: {}", url);
+
+        // Baixa o arquivo da URL para o destino
         FileUtils.copyURLToFile(new URL(url), destination);
 
-        // Verificar se o arquivo foi baixado com sucesso
+        // Verificação de download: espera até o arquivo ser baixado corretamente
+        int maxRetries = 30; // máximo de tentativas
+        int attempt = 0;
+
         while (!destination.exists() || destination.length() == 0) {
-            logger.warn("Aguardando o download do arquivo: {}", destination.getName());
-            Thread.sleep(1000);
+            if (attempt >= maxRetries) {
+                throw new Exception("Falha no download após várias tentativas: " + url);
+            }
+            logger.warn("Arquivo não encontrado ou está vazio. Tentativa {} de {}...", attempt + 1, maxRetries);
+            Thread.sleep(1000); // Espera 1 segundo antes de tentar novamente
+            attempt++;
         }
 
-        logger.info("Arquivo baixado para: {}", destination.getAbsolutePath());
+        logger.info("Arquivo baixado com sucesso: {}", destination.getAbsolutePath());
     }
 
     /**
@@ -118,7 +129,6 @@ public class MinecraftLauncherService {
      * Inicia o Minecraft com os parâmetros especificados.
      */
     public void launchMinecraft() {
-
         File javaExe = new File(basePath + File.separator + "java" + File.separator + "bin" + File.separator + "java.exe");
         File minecraftDirectory = new File(OSHelper.getOS().getMc());
         File minecraftAssets = new File(minecraftDirectory + File.separator + "assets");
