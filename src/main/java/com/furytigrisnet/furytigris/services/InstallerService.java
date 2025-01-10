@@ -16,20 +16,35 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
+ * Service responsável por gerenciar o processo de instalação, que inclui:
+ * - Download de arquivos necessários (ZIPs e JARs)
+ * - Garantia de existência de diretórios
+ * - Descompactação de arquivos baixados
+ *
  * @author Anderson Andrade Dev
- * @Data de Criação 09/01/2025
+ * @date 09/01/2025
  */
 
 @Service
 public class InstallerService {
 
     private static final Logger logger = LoggerFactory.getLogger(InstallerService.class);
+
+    // URLs dos arquivos para download
     private static final String NATIVE_URL = "https://raw.githubusercontent.com/BielZcode/Launcher-FuryTigris/main/natives.zip";
     private static final String LIBRARY_URL = "https://raw.githubusercontent.com/BielZcode/Launcher-FuryTigris/main/libraries.zip";
     private static final String JAR_URL = "https://launcher.mojang.com/v1/objects/0983f08be6a4e624f5d85689d1aca869ed99c738/client.jar";
 
-    private final String basePath = System.getProperty("user.dir");
+    // Diretório base: Pasta Downloads do usuário
+    private final String basePath = System.getProperty("user.home") + File.separator + "Downloads";
 
+    /**
+     * Método principal que executa o processo completo de instalação.
+     * Inclui:
+     * 1. Garantia da existência de diretórios.
+     * 2. Download de arquivos.
+     * 3. Descompactação de arquivos ZIP.
+     */
     public void install() throws Exception {
         ensureDirectories();
         downloadFiles();
@@ -37,7 +52,7 @@ public class InstallerService {
     }
 
     /**
-     * Garante que os diretórios necessários existam.
+     * Garante que os diretórios necessários existam antes do download e descompactação.
      */
     private void ensureDirectories() {
         createDirectoryIfNotExists(basePath + File.separator + "downloads");
@@ -46,7 +61,7 @@ public class InstallerService {
     }
 
     /**
-     * Cria um diretório caso não exista.
+     * Cria um diretório caso ele não exista.
      *
      * @param path Caminho do diretório a ser criado.
      */
@@ -60,18 +75,44 @@ public class InstallerService {
         }
     }
 
+    /**
+     * Gerencia o download dos arquivos necessários.
+     * Verifica se os arquivos já existem para evitar downloads redundantes.
+     */
     private void downloadFiles() throws Exception {
         File natives = new File(basePath + File.separator + "downloads" + File.separator + "natives.zip");
         File libraries = new File(basePath + File.separator + "downloads" + File.separator + "libraries.zip");
         File jar = new File(basePath + File.separator + "downloads" + File.separator + "client.jar");
 
-        downloadFileWithProgress(NATIVE_URL, natives);
-        downloadFileWithProgress(LIBRARY_URL, libraries);
-        downloadFileWithProgress(JAR_URL, jar);
+        // Baixa arquivos apenas se não existirem
+        if (!natives.exists()) {
+            downloadFileWithProgress(NATIVE_URL, natives);
+        } else {
+            logger.info("Arquivo já existente: {}", natives.getAbsolutePath());
+        }
+
+        if (!libraries.exists()) {
+            downloadFileWithProgress(LIBRARY_URL, libraries);
+        } else {
+            logger.info("Arquivo já existente: {}", libraries.getAbsolutePath());
+        }
+
+        if (!jar.exists()) {
+            downloadFileWithProgress(JAR_URL, jar);
+        } else {
+            logger.info("Arquivo já existente: {}", jar.getAbsolutePath());
+        }
     }
 
+    /**
+     * Realiza o download de um arquivo com barra de progresso no console.
+     *
+     * @param fileUrl     URL do arquivo a ser baixado.
+     * @param destination Arquivo de destino.
+     */
     private void downloadFileWithProgress(String fileUrl, File destination) throws Exception {
         logger.info("Iniciando download de: {}", fileUrl);
+        logger.info("Salvando arquivo em: {}", destination.getAbsolutePath());
 
         URL url = new URL(fileUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -102,6 +143,11 @@ public class InstallerService {
         }
     }
 
+    /**
+     * Imprime uma barra de progresso no console para acompanhar o download.
+     *
+     * @param progress Porcentagem concluída.
+     */
     private void printProgressBar(int progress) {
         int barLength = 50;
         int filledLength = (int) (barLength * progress / 100.0);
@@ -114,6 +160,9 @@ public class InstallerService {
         System.out.print("\r" + bar + " " + progress + "%");
     }
 
+    /**
+     * Descompacta os arquivos baixados para os diretórios apropriados.
+     */
     private void unzipFiles() throws Exception {
         File natives = new File(basePath + File.separator + "downloads" + File.separator + "natives.zip");
         File libraries = new File(basePath + File.separator + "downloads" + File.separator + "libraries.zip");
@@ -130,7 +179,7 @@ public class InstallerService {
 
         if (libraries.exists()) {
             logger.info("Descompactando arquivo: {}", libraries.getAbsolutePath());
-            unzipper.unzip(libraries.toString(), basePath + File.separator + "downloads"+ File.separator + "libraries");
+            unzipper.unzip(libraries.toString(), basePath + File.separator + "downloads" + File.separator + "libraries");
             libraries.delete();
         } else {
             logger.warn("Arquivo para descompactar não encontrado: {}", libraries.getAbsolutePath());
