@@ -1,5 +1,7 @@
 package com.furytigrisnet.furytigris.view.ui;
 
+import org.springframework.stereotype.Component;
+
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 import java.awt.*;
@@ -8,6 +10,7 @@ import java.awt.*;
  * @author Anderson Andrade Dev
  * @Data de Criação 09/01/2025
  */
+@Component
 public class RoundedProgressBarUI extends BasicProgressBarUI {
     @Override
     protected void paintDeterminate(Graphics g, JComponent c) {

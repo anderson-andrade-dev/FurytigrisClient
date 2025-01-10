@@ -1,5 +1,6 @@
 package com.furytigrisnet.furytigris.view.ui;
 
+import com.furytigrisnet.furytigris.services.InstallerService;
 import com.furytigrisnet.furytigris.services.MinecraftLauncherService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class LoadingFrame {
     private JLabel imageLogo;
 
 
-    public LoadingFrame(MinecraftLauncherService minecraftLauncherService, LauncherFrame launcherFrame){
+    public LoadingFrame(MinecraftLauncherService minecraftLauncherService,LauncherFrame launcherFrame){
         this.minecraftLauncherService =minecraftLauncherService;
         this.launcherFrame = launcherFrame;
     }
@@ -29,7 +30,6 @@ public class LoadingFrame {
     public void init() {
         try {
             System.out.println("Initializing frame...");
-            startInstallation();
             configureFrame();
             configurePanel();
             configureImages();
@@ -90,23 +90,6 @@ public class LoadingFrame {
         progressBar.setBorder(BorderFactory.createEmptyBorder());
         progressBar.setBounds(50, 450, 300, 20);
         panel.add(progressBar);
-    }
-
-    public void startInstallation() {
-        new Thread(() -> {
-            try {
-                minecraftLauncherService.downloadFiles();
-                minecraftLauncherService.unzipFiles();
-                updateStatus("Finalizando instalação...");
-                progressBar.setValue(100);
-                Thread.sleep(2000);
-                frame.dispose();
-                launcherFrame.initialize();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
     }
 
     private void updateStatus(String message) {

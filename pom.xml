@@ -29,6 +29,13 @@
   <properties>
     <java.version>21</java.version>
   </properties>
+  <repositories>
+    <!-- More repositories... -->
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -74,6 +81,13 @@
       <groupId>net.logstash.logback</groupId>
       <artifactId>logstash-logback-encoder</artifactId>
       <version>7.4</version>
+    </dependency>
+
+    <!-- More dependencies... -->
+    <dependency>
+      <groupId>com.github.SparklingComet</groupId>
+      <artifactId>java-mojang-api</artifactId>
+      <version>-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

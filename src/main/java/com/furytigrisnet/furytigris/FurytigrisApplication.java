@@ -1,6 +1,7 @@
 package com.furytigrisnet.furytigris;
 
 
+import com.furytigrisnet.furytigris.services.InstallerService;
 import com.furytigrisnet.furytigris.services.MinecraftLauncherService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,10 +13,10 @@ import java.awt.*;
 public class FurytigrisApplication implements CommandLineRunner {
 
 
-    private final MinecraftLauncherService minecraftLauncherService;
+    private final InstallerService installerService;
 
-    public FurytigrisApplication(MinecraftLauncherService minecraftLauncherService) {
-        this.minecraftLauncherService = minecraftLauncherService;
+    public FurytigrisApplication(InstallerService installerService) {
+        this.installerService = installerService;
     }
 
     public static void main(String[] args) {
@@ -28,7 +29,7 @@ public class FurytigrisApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        minecraftLauncherService.launchMinecraft();
+        installerService.install();
     }
 
 }
