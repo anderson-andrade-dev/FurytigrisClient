@@ -60,10 +60,11 @@ public class InstallerService {
         createDirectoryIfNotExists(basePath + File.separator + "downloads" + File.separator + "natives");
         createDirectoryIfNotExists(basePath + File.separator + "downloads" + File.separator + "libraries");
 
-        // Criando Diretorios Do Client
+        // Garantindo que o diretório appData exista
         var appDataDir = homePath+ File.separator +"appData";
         createDirectoryIfNotExists(appDataDir);
 
+        // Garantindo que o diretório Roaming exista
         var roamingDir = appDataDir+File.separator + "Roaming";
         createDirectoryIfNotExists(roamingDir);
 
