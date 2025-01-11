@@ -1,18 +1,16 @@
 package com.furytigrisnet.furytigris.view.ui;
 
 import com.furytigrisnet.furytigris.services.InstallerService;
-import com.furytigrisnet.furytigris.services.MinecraftLauncherService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
 
-
+@Component
 public class LoadingFrame {
 
-    private final MinecraftLauncherService minecraftLauncherService;
-    private final LauncherFrame launcherFrame;
+    private final InstallerService installerService;
     private JFrame frame;
     private JPanel panel;
     private JProgressBar progressBar;
@@ -21,9 +19,8 @@ public class LoadingFrame {
     private JLabel imageLogo;
 
 
-    public LoadingFrame(MinecraftLauncherService minecraftLauncherService,LauncherFrame launcherFrame){
-        this.minecraftLauncherService =minecraftLauncherService;
-        this.launcherFrame = launcherFrame;
+    public LoadingFrame(InstallerService installerService) {
+        this.installerService = installerService;
     }
 
     @PostConstruct
@@ -35,7 +32,7 @@ public class LoadingFrame {
             configureImages();
             configureStatusLabel();
             configureProgressBar();
-            frame.setVisible(true);
+
         } catch (Exception e) {
             System.err.println("Error during initialization: " + e.getMessage());
             e.printStackTrace();
@@ -96,5 +93,14 @@ public class LoadingFrame {
         SwingUtilities.invokeLater(() -> statusLabel.setText(message));
     }
 
+    public void setVisible(boolean b) throws Exception {
+        frame.setVisible(b);
+        installerService.install();
+
+    }
+
+    public void dispose() {
+        frame.dispose();
+    }
 
 }

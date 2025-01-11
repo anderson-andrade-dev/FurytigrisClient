@@ -4,6 +4,7 @@ package com.furytigrisnet.furytigris;
 import com.furytigrisnet.furytigris.services.InstallerService;
 import com.furytigrisnet.furytigris.services.MinecraftLauncherService;
 import com.furytigrisnet.furytigris.view.ui.LauncherFrame;
+import com.furytigrisnet.furytigris.view.ui.LoadingFrame;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,13 +15,12 @@ import java.awt.*;
 public class FurytigrisApplication implements CommandLineRunner {
 
 
-    private final InstallerService installerService;
-    private final MinecraftLauncherService minecraftLauncherService;
+    private final LoadingFrame loadingFrame;
+    private final LauncherFrame launcherFrame;
 
-    public FurytigrisApplication(InstallerService installerService, MinecraftLauncherService minecraftLauncherService) {
-        this.installerService = installerService;
-        this.minecraftLauncherService = minecraftLauncherService;
-
+    public FurytigrisApplication(LoadingFrame loadingFrame,LauncherFrame launcherFrame) {
+        this.loadingFrame = loadingFrame;
+        this.launcherFrame = launcherFrame;
     }
 
     public static void main(String[] args) {
@@ -33,9 +33,11 @@ public class FurytigrisApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        installerService.install();
-        minecraftLauncherService.launchMinecraft();
+          this.loadingFrame.setVisible(true);
 
+          this.launcherFrame.setVisible(true);
+
+        this.loadingFrame.dispose();
     }
 
 }
