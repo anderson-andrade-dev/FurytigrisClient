@@ -10,7 +10,7 @@ import java.awt.*;
  * @author Anderson Andrade Dev
  * @Data de Criação 09/01/2025
  */
-@Component
+
 public class RoundedProgressBarUI extends BasicProgressBarUI {
     @Override
     protected void paintDeterminate(Graphics g, JComponent c) {
