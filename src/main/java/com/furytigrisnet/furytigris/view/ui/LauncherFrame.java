@@ -54,9 +54,6 @@ public class LauncherFrame {
         buttonlaunch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Thread(() -> {
-                    minecraftLauncherService.launchMinecraft();}).start();
-                buttonlaunch.setText("Iniciando");
 
             }
         });

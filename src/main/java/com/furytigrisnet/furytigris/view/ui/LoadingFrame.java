@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.swing.*;
 import java.awt.*;
 
-@Component
+
 public class LoadingFrame {
 
     private final MinecraftLauncherService minecraftLauncherService;

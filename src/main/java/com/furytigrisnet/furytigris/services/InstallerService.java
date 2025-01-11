@@ -55,9 +55,18 @@ public class InstallerService {
      * Garante que os diretórios necessários existam antes do download e descompactação.
      */
     private void ensureDirectories() {
+        // Diretórios principais de downloads e suas subpastas
         createDirectoryIfNotExists(basePath + File.separator + "downloads");
         createDirectoryIfNotExists(basePath + File.separator + "downloads" + File.separator + "natives");
         createDirectoryIfNotExists(basePath + File.separator + "downloads" + File.separator + "libraries");
+
+        // Garantindo que o diretório .minecraft exista
+        String minecraftDir = System.getProperty("user.home") + File.separator + ".minecraft";
+        createDirectoryIfNotExists(minecraftDir);
+
+        // Garantindo que o diretório de assets também exista
+        String assetsDir = minecraftDir + File.separator + "assets";
+        createDirectoryIfNotExists(assetsDir);
     }
 
     /**

@@ -49,3 +49,5 @@ buildNumber.properties
 *.iml
 out
 gen
+
+downloads/
