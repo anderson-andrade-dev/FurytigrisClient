@@ -36,8 +36,8 @@ public class InstallerService {
     private static final String JAR_URL = "https://launcher.mojang.com/v1/objects/0983f08be6a4e624f5d85689d1aca869ed99c738/client.jar";
 
     // Diretório base: Pasta Downloads do usuário
-    private final String basePath = System.getProperty("user.home") + File.separator + "Downloads";
-
+    private final String basePath = System.getProperty("user.dir");
+    private final String homePath = System.getProperty("user.home");
     /**
      * Método principal que executa o processo completo de instalação.
      * Inclui:
@@ -60,12 +60,19 @@ public class InstallerService {
         createDirectoryIfNotExists(basePath + File.separator + "downloads" + File.separator + "natives");
         createDirectoryIfNotExists(basePath + File.separator + "downloads" + File.separator + "libraries");
 
+        // Criando Diretorios Do Client
+        var appDataDir = homePath+ File.separator +"appData";
+        createDirectoryIfNotExists(appDataDir);
+
+        var roamingDir = appDataDir+File.separator + "Roaming";
+        createDirectoryIfNotExists(roamingDir);
+
         // Garantindo que o diretório .minecraft exista
-        String minecraftDir = System.getProperty("user.home") + File.separator + ".minecraft";
+        var minecraftDir = homePath + File.separator + ".minecraft";
         createDirectoryIfNotExists(minecraftDir);
 
         // Garantindo que o diretório de assets também exista
-        String assetsDir = minecraftDir + File.separator + "assets";
+        var assetsDir = minecraftDir + File.separator + "assets";
         createDirectoryIfNotExists(assetsDir);
     }
 

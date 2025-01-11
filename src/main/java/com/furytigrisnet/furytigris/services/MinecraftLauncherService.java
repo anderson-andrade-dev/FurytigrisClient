@@ -32,6 +32,7 @@ public class MinecraftLauncherService {
      * @throws IllegalStateException Se o comando gerado for inválido ou não puder ser executado.
      */
     public void launchMinecraft() {
+
         // Caminho para o arquivo JAR do Minecraft
         File jar = new File(basePath + File.separator + "minecraft.jar");
 
