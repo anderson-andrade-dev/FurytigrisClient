@@ -33,7 +33,7 @@ public class MinecraftLauncherService {
      */
     public void launchMinecraft() {
 
-        // Caminho para o arquivo JAR do Minecraft
+        // Caminho para o arquivo JAR do Minecraft ------
         File jar = new File(basePath + File.separator + "minecraft.jar");
 
         // Verificando se o arquivo JAR existe antes de tentar iniciar o Minecraft
@@ -50,17 +50,23 @@ public class MinecraftLauncherService {
         }
 
         try {
-            // Logando o comando antes de executá-lo
-            logger.info("Executando comando: {}", command);
+            // Detectando o sistema operacional --
+            String os = System.getProperty("os.name").toLowerCase();
+            ProcessBuilder processBuilder = getProcessBuilder(os, command);
 
-            // Usando ProcessBuilder para garantir controle adequado sobre o ambiente
-            ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command("bash", "-c", command);
-            processBuilder.environment().put("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64");
+            // Configurando o ambiente do Java
+            if (os.contains("win")) {
+                processBuilder.environment().put("JAVA_HOME", "C:\\Program Files\\Java\\jdk-8");
+            } else {
+                processBuilder.environment().put("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64");
+            }
 
+            // Iniciando o processo --
             Process process = processBuilder.start();
 
+            // Logando a saída do processo
             logProcessOutput(process);
+
         } catch (IOException e) {
             // Capturando e logando erros ao tentar iniciar o Minecraft
             logger.error("Erro ao iniciar o Minecraft: {}", e.getMessage(), e);
@@ -68,6 +74,20 @@ public class MinecraftLauncherService {
         }
     }
 
+    private static ProcessBuilder getProcessBuilder(String os, String command) {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+
+        if (os.contains("win")) {
+            // Configuração para Windows
+            processBuilder.command("cmd.exe", "/c", command);
+        } else if (os.contains("nix") || os.contains("nux") || os.contains("mac")) {
+            // Configuração para Linux e macOS
+            processBuilder.command("bash", "-c", command);
+        } else {
+            throw new UnsupportedOperationException("Sistema operacional não suportado: " + os);
+        }
+        return processBuilder;
+    }
 
     /**
      * Constrói o comando para rodar o cliente Minecraft utilizando os parâmetros fornecidos.
@@ -106,7 +126,7 @@ public class MinecraftLauncherService {
                 urlLibraries,
                 jar.getAbsolutePath(),
                 OSHelper.getOS().getMc(),
-                OSHelper.getOS().getMc() + File.separator + "assets",
+                OSHelper.getOS().getMc() + "assets",
                 "854", // Largura da tela
                 "480", // Altura da tela
                 "_ZinhoZin", // Nome do usuário
@@ -141,4 +161,3 @@ public class MinecraftLauncherService {
         }
     }
 }
-
