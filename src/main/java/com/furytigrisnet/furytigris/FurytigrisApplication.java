@@ -16,12 +16,11 @@ public class FurytigrisApplication implements CommandLineRunner {
 
     private final InstallerService installerService;
     private final MinecraftLauncherService minecraftLauncherService;
-    private final LauncherFrame frame;
 
-    public FurytigrisApplication(InstallerService installerService, MinecraftLauncherService minecraftLauncherService , LauncherFrame frame) {
+    public FurytigrisApplication(InstallerService installerService, MinecraftLauncherService minecraftLauncherService) {
         this.installerService = installerService;
         this.minecraftLauncherService = minecraftLauncherService;
-        this.frame = frame;
+
     }
 
     public static void main(String[] args) {
