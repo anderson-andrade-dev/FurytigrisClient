@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,8 +37,8 @@ public class InstallerService {
     private static final String JAR_URL = "https://launcher.mojang.com/v1/objects/0983f08be6a4e624f5d85689d1aca869ed99c738/client.jar";
 
     // Diretório base: Pasta Downloads do usuário
-    private final String basePath = System.getProperty("user.home") + File.separator + "Downloads";
-
+    private final String basePath = System.getProperty("user.dir");
+    private final String homePath = System.getProperty("user.home");
     /**
      * Método principal que executa o processo completo de instalação.
      * Inclui:
@@ -60,12 +61,20 @@ public class InstallerService {
         createDirectoryIfNotExists(basePath + File.separator + "downloads" + File.separator + "natives");
         createDirectoryIfNotExists(basePath + File.separator + "downloads" + File.separator + "libraries");
 
+        // Garantindo que o diretório appData exista
+        var appDataDir = homePath+ File.separator +"AppData";
+        createDirectoryIfNotExists(appDataDir);
+
+        // Garantindo que o diretório Roaming exista
+        var roamingDir = appDataDir+File.separator + "Roaming";
+        createDirectoryIfNotExists(roamingDir);
+
         // Garantindo que o diretório .minecraft exista
-        String minecraftDir = System.getProperty("user.home") + File.separator + ".minecraft";
+        var minecraftDir = homePath + File.separator + ".minecraft";
         createDirectoryIfNotExists(minecraftDir);
 
         // Garantindo que o diretório de assets também exista
-        String assetsDir = minecraftDir + File.separator + "assets";
+        var assetsDir = minecraftDir + File.separator + "assets";
         createDirectoryIfNotExists(assetsDir);
     }
 
@@ -123,7 +132,7 @@ public class InstallerService {
         logger.info("Iniciando download de: {}", fileUrl);
         logger.info("Salvando arquivo em: {}", destination.getAbsolutePath());
 
-        URL url = new URL(fileUrl);
+        URL url = new URI(fileUrl).toURL();
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         int fileSize = connection.getContentLength();
 
@@ -162,8 +171,8 @@ public class InstallerService {
         int filledLength = (int) (barLength * progress / 100.0);
 
         StringBuilder bar = new StringBuilder("[");
-        for (int i = 0; i < filledLength; i++) bar.append("=");
-        for (int i = filledLength; i < barLength; i++) bar.append(" ");
+        bar.append("=".repeat(Math.max(0, filledLength)));
+        bar.append(" ".repeat(Math.max(0, barLength - filledLength)));
         bar.append("]");
 
         System.out.print("\r" + bar + " " + progress + "%");
@@ -181,7 +190,10 @@ public class InstallerService {
         if (natives.exists()) {
             logger.info("Descompactando arquivo: {}", natives.getAbsolutePath());
             unzipper.unzip(natives.toString(), basePath + File.separator + "downloads" + File.separator + "natives");
-            natives.delete();
+            if (natives.delete()) {
+                logger.info("Arquivo Deletado com Sucesso: {}", natives.getAbsolutePath());
+            }
+
         } else {
             logger.warn("Arquivo para descompactar não encontrado: {}", natives.getAbsolutePath());
         }
@@ -189,7 +201,10 @@ public class InstallerService {
         if (libraries.exists()) {
             logger.info("Descompactando arquivo: {}", libraries.getAbsolutePath());
             unzipper.unzip(libraries.toString(), basePath + File.separator + "downloads" + File.separator + "libraries");
-            libraries.delete();
+
+            if (libraries.delete()) {
+                logger.info("Arquivo Deletado com Sucesso: {}", libraries.getAbsolutePath());
+            }
         } else {
             logger.warn("Arquivo para descompactar não encontrado: {}", libraries.getAbsolutePath());
         }

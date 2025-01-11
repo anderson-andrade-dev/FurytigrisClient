@@ -32,6 +32,7 @@ public class MinecraftLauncherService {
      * @throws IllegalStateException Se o comando gerado for inválido ou não puder ser executado.
      */
     public void launchMinecraft() {
+
         // Caminho para o arquivo JAR do Minecraft
         File jar = new File(basePath + File.separator + "minecraft.jar");
 
@@ -52,10 +53,13 @@ public class MinecraftLauncherService {
             // Logando o comando antes de executá-lo
             logger.info("Executando comando: {}", command);
 
-            // Executando o comando
-            Process process = Runtime.getRuntime().exec(command);
+            // Usando ProcessBuilder para garantir controle adequado sobre o ambiente
+            ProcessBuilder processBuilder = new ProcessBuilder();
+            processBuilder.command("bash", "-c", command);
+            processBuilder.environment().put("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64");
 
-            // Registrando a saída do processo (logs do Minecraft)
+            Process process = processBuilder.start();
+
             logProcessOutput(process);
         } catch (IOException e) {
             // Capturando e logando erros ao tentar iniciar o Minecraft
@@ -63,6 +67,7 @@ public class MinecraftLauncherService {
             throw new IllegalStateException("Erro ao iniciar o Minecraft: " + e.getMessage(), e);
         }
     }
+
 
     /**
      * Constrói o comando para rodar o cliente Minecraft utilizando os parâmetros fornecidos.

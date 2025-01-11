@@ -1,6 +1,7 @@
 package com.furytigrisnet.furytigris.view.ui;
 
 import com.furytigrisnet.furytigris.services.MinecraftLauncherService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @Component
-public class LauncherFrame {
+public class LauncherFrame{
 
     public JFrame frame;
     public JPanel panel;
@@ -17,15 +18,16 @@ public class LauncherFrame {
 
     public LauncherFrame(MinecraftLauncherService minecraftLauncherService) {
         this.minecraftLauncherService = minecraftLauncherService;
+
     }
 
-    public void initialize() {
+    @PostConstruct
+    public void init() {
 
         frame = new JFrame("FuryTigris Client");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setBounds(760, 415, 800, 500);
         frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
 
         ImageIcon icon = new ImageIcon("furytigris/images/iconmenu.png");
         frame.setIconImage(icon.getImage());
@@ -54,11 +56,20 @@ public class LauncherFrame {
         buttonlaunch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                minecraftLauncherService.launchMinecraft();
+                frame.dispose();
             }
         });
         panel.add(buttonlaunch);
 
         frame.getContentPane().add(panel);
     }
+
+    public void setVisible(boolean b){
+        frame.setVisible(true);
+    }
+    public void dispose(){
+        frame.dispose();
+    }
+
 }
